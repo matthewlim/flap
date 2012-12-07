@@ -1,4 +1,4 @@
-package com.example.flap;
+package com.kayohgee.flap;
 
 import android.app.Activity;
 import android.content.Context;

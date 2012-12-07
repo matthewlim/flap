@@ -17,22 +17,26 @@ public class FlapActivity extends Activity {
 
     ToggleButton button;
     ImageView    pointer;
-    TranslateAnimation translateAnimation = null;
-    AlphaAnimation     fadeInAnimation    = null;
-    AlphaAnimation     fadeOutAnimation   = null;
-    AnimationSet       animationSet       = null;
+    AnimationSet animationSet = null;
+    View touchShield;
 
     @Override
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        button = (ToggleButton) findViewById(R.id.toggle_button);
 
+        button = (ToggleButton) findViewById(R.id.toggle_button);
         pointer = (ImageView) findViewById(R.id.pointer_hand);
         pointer.setVisibility(View.INVISIBLE);
+        touchShield = findViewById(R.id.touch_shield);
+        touchShield.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View view) {}
+        });
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
+                touchShield.setVisibility(View.VISIBLE);
                 pointer.setAnimation(animationSet);
                 pointer.setVisibility(View.VISIBLE);
                 animationSet.start();
@@ -61,19 +65,22 @@ public class FlapActivity extends Activity {
     }
 
     private void buildPointerAnimationSet () {
-        fadeInAnimation = new AlphaAnimation(0, 1);
+        final AlphaAnimation fadeInAnimation = new AlphaAnimation(0, 1);
         fadeInAnimation.setDuration(500);
         fadeInAnimation.setFillAfter(true);
-        fadeOutAnimation = new AlphaAnimation(1, 0);
+
+        final AlphaAnimation fadeOutAnimation = new AlphaAnimation(1, 0);
         fadeOutAnimation.setDuration(500);
         fadeOutAnimation.setFillAfter(true);
-        translateAnimation = new TranslateAnimation(0, 0, 0, -button.getTop() + 20);
+        int y_delta = -button.getTop() + 20;
+        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, 0,
+                                                                       y_delta);
         translateAnimation.setStartOffset(500);
         translateAnimation.setDuration(1500);
         translateAnimation.setRepeatMode(Animation.REVERSE);
         translateAnimation.setRepeatCount(1);
         animationSet = new AnimationSet(true);
-        Animation.AnimationListener listener = new Animation.AnimationListener() {
+        Animation.AnimationListener translateListener = new Animation.AnimationListener() {
             @Override
             public void onAnimationStart (Animation animation) {}
 
@@ -88,7 +95,21 @@ public class FlapActivity extends Activity {
                 button.setChecked(false);
             }
         };
-        translateAnimation.setAnimationListener(listener);
+
+        Animation.AnimationListener fadeOutListener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart (Animation animation) {}
+
+            @Override
+            public void onAnimationEnd (Animation animation) {
+                touchShield.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat (Animation animation) {}
+        };
+        translateAnimation.setAnimationListener(translateListener);
+        fadeOutAnimation.setAnimationListener(fadeOutListener);
         animationSet.addAnimation(translateAnimation);
         animationSet.addAnimation(fadeInAnimation);
     }

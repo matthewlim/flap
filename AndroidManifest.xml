@@ -8,6 +8,7 @@
 
     <application android:label="@string/app_name" android:icon="@drawable/pointer">
         <activity android:name="FlapActivity"
+                  android:screenOrientation="portrait"
                   android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
                   android:label="@string/app_name">
             <intent-filter>

@@ -7,10 +7,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.TranslateAnimation;
+import android.view.animation.*;
 import android.widget.ImageView;
 import android.widget.ToggleButton;
 
@@ -21,6 +18,7 @@ public class FlapActivity extends Activity {
     AnimationSet animationSet = null;
     View touchShield;
     Handler handler;
+
     @Override
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +65,19 @@ public class FlapActivity extends Activity {
     }
 
     private void buildPointerAnimationSet () {
+
+        ScaleAnimation scaleAnimationPressDown = new ScaleAnimation(1.0f, 0.8f, 1.0f, 0.8f,
+                                                                    Animation.RELATIVE_TO_SELF, 0.5f,
+                                                                    Animation.RELATIVE_TO_SELF, 0.5f);
+        scaleAnimationPressDown.setStartOffset(1950);
+        scaleAnimationPressDown.setDuration(150);
+
+        ScaleAnimation scaleAnimationPressUp = new ScaleAnimation(1.0f, 1.25f, 1.0f, 1.25f,
+                                                                  Animation.RELATIVE_TO_SELF, 0.5f,
+                                                                  Animation.RELATIVE_TO_SELF, 0.5f);
+        scaleAnimationPressUp.setStartOffset(2000);
+        scaleAnimationPressUp.setDuration(150);
+
         final AlphaAnimation fadeInAnimation = new AlphaAnimation(0, 1);
         fadeInAnimation.setDuration(500);
         fadeInAnimation.setFillAfter(true);
@@ -74,6 +85,7 @@ public class FlapActivity extends Activity {
         final AlphaAnimation fadeOutAnimation = new AlphaAnimation(1, 0);
         fadeOutAnimation.setDuration(500);
         fadeOutAnimation.setFillAfter(true);
+
         int y_delta = -button.getTop() + 20;
         TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, 0,
                                                                        y_delta);
@@ -81,6 +93,7 @@ public class FlapActivity extends Activity {
         translateAnimation.setDuration(1500);
         translateAnimation.setRepeatMode(Animation.REVERSE);
         translateAnimation.setRepeatCount(1);
+
         animationSet = new AnimationSet(true);
 
         Animation.AnimationListener translateListener = new Animation.AnimationListener() {
@@ -95,6 +108,7 @@ public class FlapActivity extends Activity {
 
             @Override
             public void onAnimationRepeat (Animation animation) {
+
                 button.setPressed(true);
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -120,7 +134,9 @@ public class FlapActivity extends Activity {
         };
         translateAnimation.setAnimationListener(translateListener);
         fadeOutAnimation.setAnimationListener(fadeOutListener);
-        animationSet.addAnimation(translateAnimation);
+        animationSet.addAnimation(scaleAnimationPressUp);
+        animationSet.addAnimation(scaleAnimationPressDown);
         animationSet.addAnimation(fadeInAnimation);
+        animationSet.addAnimation(translateAnimation);
     }
 }

@@ -3,6 +3,7 @@ package com.kayohgee.flap;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.View;
@@ -19,7 +20,7 @@ public class FlapActivity extends Activity {
     ImageView    pointer;
     AnimationSet animationSet = null;
     View touchShield;
-
+    Handler handler;
     @Override
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +29,7 @@ public class FlapActivity extends Activity {
         button = (ToggleButton) findViewById(R.id.toggle_button);
         pointer = (ImageView) findViewById(R.id.pointer_hand);
         pointer.setVisibility(View.INVISIBLE);
+        handler = new Handler();
         touchShield = findViewById(R.id.touch_shield);
         touchShield.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +82,7 @@ public class FlapActivity extends Activity {
         translateAnimation.setRepeatMode(Animation.REVERSE);
         translateAnimation.setRepeatCount(1);
         animationSet = new AnimationSet(true);
+
         Animation.AnimationListener translateListener = new Animation.AnimationListener() {
             @Override
             public void onAnimationStart (Animation animation) {}
@@ -92,7 +95,14 @@ public class FlapActivity extends Activity {
 
             @Override
             public void onAnimationRepeat (Animation animation) {
-                button.setChecked(false);
+                button.setPressed(true);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        button.setPressed(false);
+                        button.setChecked(false);
+                    }
+                }, 100);
             }
         };
 

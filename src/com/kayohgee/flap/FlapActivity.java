@@ -5,9 +5,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.View;
-import android.view.animation.*;
+import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.ToggleButton;
 
@@ -64,6 +70,13 @@ public class FlapActivity extends Activity {
         return false;
     }
 
+    private float calculateScaledDelta(float delta) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        manager.getDefaultDisplay().getMetrics(metrics);
+        return delta * metrics.scaledDensity;
+    }
+
     private void buildPointerAnimationSet () {
 
         ScaleAnimation scaleAnimationPressDown = new ScaleAnimation(1.0f, 0.8f, 1.0f, 0.8f,
@@ -86,7 +99,7 @@ public class FlapActivity extends Activity {
         fadeOutAnimation.setDuration(500);
         fadeOutAnimation.setFillAfter(true);
 
-        int y_delta = -button.getTop() + 20;
+        float y_delta = -button.getTop() + calculateScaledDelta(20);
         TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, 0,
                                                                        y_delta);
         translateAnimation.setStartOffset(500);
